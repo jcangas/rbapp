@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+require 'thor/runner'
+
+require '<%= name %>/version'
+
+module Thor::Util #:nodoc:
+  SEARCH_ROOT = File.dirname(__FILE__)
+  # redefine to search tasks only for this app
+  def self.globs_for(path)
+    ["#{SEARCH_ROOT}/*.thor", "#{SEARCH_ROOT}/tasks/*.thor"]
+  end
+end
+
+module <%= name.capitalize %>
+  EXE_NAME = File.basename($0, '.rb')
+  class Runner < Thor::Runner
+    # remove some tasks not needed
+    superclass.remove_task :install, :installed, :uninstall, :update
+    
+    # default version and banner outputs THOR, so redefine it
+
+    def self.banner(task, all = false, subcommand = false)
+      "#{<%= name.capitalize %>::EXE_NAME} " + task.formatted_usage(self, all, subcommand)
+    end    
+
+    desc "version", "Show #{<%= name.capitalize %>::EXE_NAME} version"
+    def version
+      say "#{<%= name.capitalize %>::VERSION}"
+    end
+  end
+end
